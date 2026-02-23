@@ -1,4 +1,4 @@
-V2Ray Transport is a set of private protocols invented by v2ray, and has contaminated the names of other protocols, such
+﻿V2Ray Transport is a set of private protocols invented by v2ray, and has contaminated the names of other protocols, such
 as `trojan-grpc` in clash.
 
 ### Structure
@@ -16,6 +16,7 @@ Available transports:
 * QUIC
 * gRPC
 * HTTPUpgrade
+* xHTTP (splitHTTP)
 
 !!! warning "Difference from v2ray-core"
 
@@ -227,3 +228,39 @@ The server will verify.
 Extra headers of HTTP request.
 
 The server will write in response if not empty.
+
+### xHTTP (splitHTTP)
+
+```json
+{
+  "type": "xhttp",
+  "host": "",
+  "path": "/",
+  "mode": "",
+  "headers": {}
+}
+```
+
+#### type
+
+Use `xhttp` or `splithttp` (alias) to enable Xray-compatible split HTTP transport.
+
+#### host
+
+Host domain.
+
+The server will verify if not empty.
+
+#### path
+
+Path prefix for HTTP request.
+
+The server will verify.
+
+#### mode
+
+Transport mode. One of `packet-up`, `stream-up`, `stream-one`, or empty (defaults to `packet-up`).
+
+#### headers
+
+Extra headers of HTTP request.
