@@ -28,6 +28,7 @@ type InboundTLSOptions struct {
 	KeyPath                          string                              `json:"key_path,omitempty"`
 	KernelTx                         bool                                `json:"kernel_tx,omitempty"`
 	KernelRx                         bool                                `json:"kernel_rx,omitempty"`
+	HandshakeTimeout                 badoption.Duration                  `json:"handshake_timeout,omitempty"`
 	CertificateProvider              *CertificateProviderOptions         `json:"certificate_provider,omitempty"`
 
 	// Deprecated: use certificate_provider
@@ -120,6 +121,7 @@ type OutboundTLSOptions struct {
 	RecordFragment             bool                                `json:"record_fragment,omitempty"`
 	KernelTx                   bool                                `json:"kernel_tx,omitempty"`
 	KernelRx                   bool                                `json:"kernel_rx,omitempty"`
+	HandshakeTimeout           badoption.Duration                  `json:"handshake_timeout,omitempty"`
 	ECH                        *OutboundECHOptions                 `json:"ech,omitempty"`
 	UTLS                       *OutboundUTLSOptions                `json:"utls,omitempty"`
 	Reality                    *OutboundRealityOptions             `json:"reality,omitempty"`

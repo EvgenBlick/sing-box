@@ -5,6 +5,7 @@ icon: material/new-box
 !!! quote "Changes in sing-box 1.14.0"
 
     :material-plus: [certificate_provider](#certificate_provider)  
+    :material-plus: [handshake_timeout](#handshake_timeout)  
     :material-delete-clock: [acme](#acme-fields)
 
 !!! quote "Changes in sing-box 1.13.0"
@@ -54,6 +55,7 @@ icon: material/new-box
   "key_path": "",
   "kernel_tx": false,
   "kernel_rx": false,
+  "handshake_timeout": "",
   "certificate_provider": "",
 
   // Deprecated
@@ -124,6 +126,9 @@ icon: material/new-box
   "fragment": false,
   "fragment_fallback_delay": "",
   "record_fragment": false,
+  "kernel_tx": false,
+  "kernel_rx": false,
+  "handshake_timeout": "",
   "ech": {
     "enabled": false,
     "config": [],
@@ -416,6 +421,14 @@ Enable kernel TLS transmit support.
     kTLS RX will definitely degrade performance even if `splice(2)` is in use, so enabling it is not recommended.
 
 Enable kernel TLS receive support.
+
+#### handshake_timeout
+
+!!! question "Since sing-box 1.14.0"
+
+TLS handshake timeout, in golang's Duration format.
+
+`15s` is used by default.
 
 #### certificate_provider
 

@@ -5,6 +5,7 @@ icon: material/new-box
 !!! quote "sing-box 1.14.0 中的更改"
 
     :material-plus: [certificate_provider](#certificate_provider)  
+    :material-plus: [handshake_timeout](#handshake_timeout)  
     :material-delete-clock: [acme](#acme-字段)
 
 !!! quote "sing-box 1.13.0 中的更改"
@@ -54,6 +55,7 @@ icon: material/new-box
   "key_path": "",
   "kernel_tx": false,
   "kernel_rx": false,
+  "handshake_timeout": "",
   "certificate_provider": "",
 
   // 废弃的
@@ -124,6 +126,9 @@ icon: material/new-box
   "fragment": false,
   "fragment_fallback_delay": "",
   "record_fragment": false,
+  "kernel_tx": false,
+  "kernel_rx": false,
+  "handshake_timeout": "",
   "ech": {
     "enabled": false,
     "config": [],
@@ -415,6 +420,14 @@ echo | openssl s_client -servername example.com -connect example.com:443 2>/dev/
     即使使用 `splice(2)`，kTLS RX 也肯定会降低性能，因此不建议启用。
 
 启用内核 TLS 接收支持。
+
+#### handshake_timeout
+
+!!! question "自 sing-box 1.14.0 起"
+
+TLS 握手超时，采用 golang 的 Duration 格式。
+
+默认使用 `15s`。
 
 #### certificate_provider
 
