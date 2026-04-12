@@ -108,6 +108,7 @@ icon: material/new-box
 ```json
 {
   "enabled": true,
+  "engine": "",
   "disable_sni": false,
   "server_name": "",
   "insecure": false,
@@ -187,6 +188,49 @@ Cipher suite values:
 #### enabled
 
 Enable TLS.
+
+#### engine
+
+==Client only==
+
+TLS engine to use.
+
+Values:
+
+* `go`
+* `apple`
+
+`apple` uses Network.framework, only available on Apple platforms and only supports **direct** TCP TLS client connections.
+
+!!! warning ""
+
+    Experimental only: due to the high memory overhead of both CGO and Network.framework,
+    do not use in proxy paths on iOS and tvOS.
+    If you want to circumvent TLS fingerprint-based proxy censorship,
+    use [NaiveProxy](/configuration/outbound/naive/) instead.
+
+Supported fields:
+
+* `server_name`
+* `insecure`
+* `alpn`
+* `min_version`
+* `max_version`
+* `certificate` / `certificate_path`
+* `certificate_public_key_sha256`
+* `handshake_timeout`
+
+Unsupported fields:
+
+* `disable_sni`
+* `cipher_suites`
+* `curve_preferences`
+* `client_certificate` / `client_certificate_path` / `client_key` / `client_key_path`
+* `fragment` / `record_fragment`
+* `kernel_tx` / `kernel_rx`
+* `ech`
+* `utls`
+* `reality`
 
 #### disable_sni
 

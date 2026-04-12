@@ -108,6 +108,7 @@ icon: material/new-box
 ```json
 {
   "enabled": true,
+  "engine": "",
   "disable_sni": false,
   "server_name": "",
   "insecure": false,
@@ -187,6 +188,48 @@ TLS 版本值：
 #### enabled
 
 启用 TLS
+
+#### engine
+
+==仅客户端==
+
+要使用的 TLS 引擎。
+
+可用值：
+
+* `go`
+* `apple`
+
+`apple` 使用 Network.framework，仅在 Apple 平台可用，且仅支持 **直接** TCP TLS 客户端连接。
+
+!!! warning ""
+
+    仅供实验用途：由于 CGO 和 Network.framework 占用的内存都很多，
+    不应在 iOS 和 tvOS 的代理路径中使用。
+    如果您想规避基于 TLS 指纹的代理审查，应使用 [NaiveProxy](/zh/configuration/outbound/naive/)。
+
+支持的字段：
+
+* `server_name`
+* `insecure`
+* `alpn`
+* `min_version`
+* `max_version`
+* `certificate` / `certificate_path`
+* `certificate_public_key_sha256`
+* `handshake_timeout`
+
+不支持的字段：
+
+* `disable_sni`
+* `cipher_suites`
+* `curve_preferences`
+* `client_certificate` / `client_certificate_path` / `client_key` / `client_key_path`
+* `fragment` / `record_fragment`
+* `kernel_tx` / `kernel_rx`
+* `ech`
+* `utls`
+* `reality`
 
 #### disable_sni
 

@@ -101,6 +101,7 @@ func (o *InboundTLSOptionsContainer) ReplaceInboundTLSOptions(options *InboundTL
 
 type OutboundTLSOptions struct {
 	Enabled                    bool                                `json:"enabled,omitempty"`
+	Engine                     string                              `json:"engine,omitempty"`
 	DisableSNI                 bool                                `json:"disable_sni,omitempty"`
 	ServerName                 string                              `json:"server_name,omitempty"`
 	Insecure                   bool                                `json:"insecure,omitempty"`
