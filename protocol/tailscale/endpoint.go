@@ -85,6 +85,7 @@ type Endpoint struct {
 	network           adapter.NetworkManager
 	platformInterface adapter.PlatformInterface
 	server            *tsnet.Server
+	controlTransport  adapter.HTTPTransport
 	stack             *stack.Stack
 	icmpForwarder     *tun.ICMPForwarder
 	filter            *atomic.Pointer[filter.Filter]
@@ -219,10 +220,7 @@ func NewEndpoint(ctx context.Context, router adapter.Router, logger log.ContextL
 	}
 	dnsRouter := service.FromContext[adapter.DNSRouter](ctx)
 	httpClientManager := service.FromContext[adapter.HTTPClientManager](ctx)
-	if httpClientManager == nil {
-		return nil, E.New("missing HTTP client manager")
-	}
-	controlTransport, err := httpClientManager.ResolveTransport(logger, controlHTTPClientOptions)
+	controlTransport, err := httpClientManager.ResolveTransport(ctx, logger, controlHTTPClientOptions)
 	if err != nil {
 		return nil, E.Cause(err, "create control HTTP client")
 	}
@@ -256,6 +254,7 @@ func NewEndpoint(ctx context.Context, router adapter.Router, logger log.ContextL
 		network:                    service.FromContext[adapter.NetworkManager](ctx),
 		platformInterface:          service.FromContext[adapter.PlatformInterface](ctx),
 		server:                     server,
+		controlTransport:           controlTransport,
 		acceptRoutes:               options.AcceptRoutes,
 		exitNode:                   options.ExitNode,
 		exitNodeAllowLANAccess:     options.ExitNodeAllowLANAccess,
@@ -492,7 +491,7 @@ func (t *Endpoint) watchState() {
 }
 
 func (t *Endpoint) Close() error {
-	err := common.Close(common.PtrOrNil(t.server))
+	err := common.Close(common.PtrOrNil(t.server), t.controlTransport)
 	netmon.RegisterInterfaceGetter(nil)
 	netns.SetControlFunc(nil)
 	if t.fallbackTCPCloser != nil {
