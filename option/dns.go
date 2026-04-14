@@ -166,11 +166,47 @@ type RemoteTLSDNSServerOptions struct {
 	OutboundTLSOptionsContainer
 }
 
+type _RemoteHTTPSDNSServerOptions struct {
+	DNSServerAddressOptions
+	Path   string `json:"path,omitempty"`
+	Method string `json:"method,omitempty"`
+	_HTTPClientOptions
+}
+
 type RemoteHTTPSDNSServerOptions struct {
 	DNSServerAddressOptions
 	Path   string `json:"path,omitempty"`
 	Method string `json:"method,omitempty"`
 	HTTPClientOptions
+}
+
+func (o RemoteHTTPSDNSServerOptions) MarshalJSON() ([]byte, error) {
+	raw := _RemoteHTTPSDNSServerOptions{
+		DNSServerAddressOptions: o.DNSServerAddressOptions,
+		Path:                   o.Path,
+		Method:                 o.Method,
+		_HTTPClientOptions:     _HTTPClientOptions(o.HTTPClientOptions),
+	}
+	return badjson.MarshallObjects(raw, httpClientVariant(raw._HTTPClientOptions))
+}
+
+func (o *RemoteHTTPSDNSServerOptions) UnmarshalJSON(content []byte) error {
+	var raw _RemoteHTTPSDNSServerOptions
+	err := json.Unmarshal(content, &raw)
+	if err != nil {
+		return err
+	}
+	err = unmarshalHTTPClientVersionOptions(content, &raw, &raw._HTTPClientOptions)
+	if err != nil {
+		return err
+	}
+	*o = RemoteHTTPSDNSServerOptions{
+		DNSServerAddressOptions: raw.DNSServerAddressOptions,
+		Path:                   raw.Path,
+		Method:                 raw.Method,
+		HTTPClientOptions:      HTTPClientOptions(raw._HTTPClientOptions),
+	}
+	return nil
 }
 
 type FakeIPDNSServerOptions struct {
