@@ -18,6 +18,8 @@ typedef struct box_apple_http_task {
 	char *error;
 } box_apple_http_task_t;
 
+static NSString *const box_apple_http_verify_time_key = @"sing-box.verify-time";
+
 static void box_set_error_string(char **error_out, NSString *message) {
 	if (error_out == NULL || *error_out != NULL) {
 		return;
@@ -72,8 +74,11 @@ static NSArray *box_parse_certificates_from_pem(const char *pem, size_t pem_len)
 	return certificates;
 }
 
-static bool box_evaluate_trust(SecTrustRef trustRef, NSArray *anchors, bool anchor_only) {
+static bool box_evaluate_trust(SecTrustRef trustRef, NSArray *anchors, bool anchor_only, NSDate *verifyDate) {
 	if (trustRef == NULL) {
+		return false;
+	}
+	if (verifyDate != nil && SecTrustSetVerifyDate(trustRef, (__bridge CFDateRef)verifyDate) != errSecSuccess) {
 		return false;
 	}
 	if (anchors.count > 0 || anchor_only) {
@@ -91,6 +96,17 @@ static bool box_evaluate_trust(SecTrustRef trustRef, NSArray *anchors, bool anch
 		CFRelease(error);
 	}
 	return result;
+}
+
+static NSDate *box_apple_http_verify_date_for_request(NSURLRequest *request) {
+	if (request == nil) {
+		return nil;
+	}
+	id value = [NSURLProtocol propertyForKey:box_apple_http_verify_time_key inRequest:request];
+	if (![value isKindOfClass:[NSNumber class]]) {
+		return nil;
+	}
+	return [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value longLongValue] / 1000.0];
 }
 
 static box_apple_http_response_t *box_create_response(NSHTTPURLResponse *httpResponse, NSData *data) {
@@ -148,22 +164,15 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
 		completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
 		return;
 	}
-	BOOL needsCustomHandling = self.insecure || self.anchorOnly || self.anchors.count > 0 || self.pinnedPublicKeyHashes.length > 0;
+	NSDate *verifyDate = box_apple_http_verify_date_for_request(task.currentRequest ?: task.originalRequest);
+	BOOL needsCustomHandling = self.insecure || self.anchorOnly || self.anchors.count > 0 || self.pinnedPublicKeyHashes.length > 0 || verifyDate != nil;
 	if (!needsCustomHandling) {
 		completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 		return;
 	}
 	BOOL ok = YES;
 	if (!self.insecure) {
-		if (self.anchorOnly || self.anchors.count > 0) {
-			ok = box_evaluate_trust(trustRef, self.anchors, self.anchorOnly);
-		} else {
-			CFErrorRef error = NULL;
-			ok = SecTrustEvaluateWithError(trustRef, &error);
-			if (error != NULL) {
-				CFRelease(error);
-			}
-		}
+		ok = box_evaluate_trust(trustRef, self.anchors, self.anchorOnly, verifyDate);
 	}
 	if (ok && self.pinnedPublicKeyHashes.length > 0) {
 		CFArrayRef certificateChain = SecTrustCopyCertificateChain(trustRef);
@@ -305,6 +314,9 @@ box_apple_http_task_t *box_apple_http_session_send_async(
 		}
 		if (request->body != NULL && request->body_len > 0) {
 			urlRequest.HTTPBody = [NSData dataWithBytes:request->body length:request->body_len];
+		}
+		if (request->has_verify_time) {
+			[NSURLProtocol setProperty:@(request->verify_time_unix_millis) forKey:box_apple_http_verify_time_key inRequest:urlRequest];
 		}
 		box_apple_http_task_t *task = calloc(1, sizeof(box_apple_http_task_t));
 		dispatch_semaphore_t doneSemaphore = dispatch_semaphore_create(0);

@@ -28,6 +28,8 @@ typedef struct box_apple_http_request {
 	size_t header_count;
 	const uint8_t *body;
 	size_t body_len;
+	bool has_verify_time;
+	int64_t verify_time_unix_millis;
 } box_apple_http_request_t;
 
 typedef struct box_apple_http_response {

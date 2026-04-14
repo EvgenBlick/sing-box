@@ -25,6 +25,8 @@ box_apple_tls_client_t *box_apple_tls_client_create(
 	const char *anchor_pem,
 	size_t anchor_pem_len,
 	bool anchor_only,
+	bool has_verify_time,
+	int64_t verify_time_unix_millis,
 	char **error_out
 );
 

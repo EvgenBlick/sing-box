@@ -64,6 +64,15 @@ func (c *appleClientConfig) ClientHandshake(ctx context.Context, conn net.Conn) 
 	anchorPEMPtr := cStringOrNil(c.anchorPEM)
 	defer cFree(anchorPEMPtr)
 
+	var (
+		hasVerifyTime       bool
+		verifyTimeUnixMilli int64
+	)
+	if c.timeFunc != nil {
+		hasVerifyTime = true
+		verifyTimeUnixMilli = c.timeFunc().UnixMilli()
+	}
+
 	var errorPtr *C.char
 	client := C.box_apple_tls_client_create(
 		C.int(dupFD),
@@ -76,6 +85,8 @@ func (c *appleClientConfig) ClientHandshake(ctx context.Context, conn net.Conn) 
 		anchorPEMPtr,
 		C.size_t(len(c.anchorPEM)),
 		C.bool(c.anchorOnly),
+		C.bool(hasVerifyTime),
+		C.int64_t(verifyTimeUnixMilli),
 		&errorPtr,
 	)
 	if client == nil {

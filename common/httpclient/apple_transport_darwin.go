@@ -22,6 +22,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 	"unsafe"
 
 	"github.com/sagernet/sing-box/adapter"
@@ -32,6 +33,7 @@ import (
 	E "github.com/sagernet/sing/common/exceptions"
 	"github.com/sagernet/sing/common/logger"
 	N "github.com/sagernet/sing/common/network"
+	"github.com/sagernet/sing/common/ntp"
 )
 
 const applePinnedHashSize = sha256.Size
@@ -72,6 +74,7 @@ type appleTransportShared struct {
 	logger logger.ContextLogger
 	bridge *proxybridge.Bridge
 	config appleSessionConfig
+	timeFunc func() time.Time
 	refs   atomic.Int32
 }
 
@@ -99,6 +102,7 @@ func newAppleTransport(ctx context.Context, logger logger.ContextLogger, rawDial
 		logger: logger,
 		bridge: bridge,
 		config: sessionConfig,
+		timeFunc: ntp.TimeFuncFromContext(ctx),
 	}
 	shared.refs.Store(1)
 	session, err := shared.newSession()
@@ -279,14 +283,24 @@ func (t *appleTransport) RoundTrip(request *http.Request) (*http.Response, error
 		bodyPointer = (*C.uint8_t)(C.CBytes(body))
 		defer C.free(unsafe.Pointer(bodyPointer))
 	}
+	var (
+		hasVerifyTime       bool
+		verifyTimeUnixMilli int64
+	)
+	if t.shared.timeFunc != nil {
+		hasVerifyTime = true
+		verifyTimeUnixMilli = t.shared.timeFunc().UnixMilli()
+	}
 	cRequest := C.box_apple_http_request_t{
-		method:        cMethod,
-		url:           cURL,
-		header_keys:   (**C.char)(headerKeysPointer),
-		header_values: (**C.char)(headerValuesPointer),
-		header_count:  C.size_t(len(cHeaderKeys)),
-		body:          bodyPointer,
-		body_len:      C.size_t(len(body)),
+		method:                 cMethod,
+		url:                    cURL,
+		header_keys:            (**C.char)(headerKeysPointer),
+		header_values:          (**C.char)(headerValuesPointer),
+		header_count:           C.size_t(len(cHeaderKeys)),
+		body:                   bodyPointer,
+		body_len:               C.size_t(len(body)),
+		has_verify_time:        C.bool(hasVerifyTime),
+		verify_time_unix_millis: C.int64_t(verifyTimeUnixMilli),
 	}
 	var cErr *C.char
 	var task *C.box_apple_http_task_t

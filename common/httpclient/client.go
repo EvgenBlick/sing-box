@@ -53,6 +53,21 @@ func NewTransport(ctx context.Context, logger logger.ContextLogger, tag string, 
 			host:      host,
 			tag:       tag,
 		}, nil
+	case C.TLSEngineCronet:
+		transport, transportErr := newCronetTransport(ctx, logger, rawDialer, options)
+		if transportErr != nil {
+			return nil, transportErr
+		}
+		headers := options.Headers.Build()
+		host := headers.Get("Host")
+		headers.Del("Host")
+		return &Transport{
+			transport: transport,
+			dialer:    rawDialer,
+			headers:   headers,
+			host:      host,
+			tag:       tag,
+		}, nil
 	case C.TLSEngineDefault, "go":
 	default:
 		return nil, E.New("unknown HTTP engine: ", options.Engine)

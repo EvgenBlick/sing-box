@@ -37,6 +37,7 @@ Values:
 
 * `go` (default)
 * `apple`
+* `cronet`
 
 `apple` uses NSURLSession, only available on Apple platforms.
 
@@ -72,6 +73,45 @@ Unsupported fields:
 * `tls.ech`
 * `tls.utls`
 * `tls.reality`
+
+`cronet` uses Cronet, only available when sing-box is built with the `with_naive_outbound` tag.
+
+Supported fields:
+
+* `version`
+* `disable_version_fallback` (`version = 3` only)
+* `headers`
+* `tls.server_name` (must match request host)
+* `tls.certificate` / `tls.certificate_path`
+* `tls.certificate_public_key_sha256`
+* `tls.ech.config` / `tls.ech.config_path` / `tls.ech.query_server_name`
+* `http2.stream_receive_window` / `http2.connection_receive_window`
+* `quic.stream_receive_window` / `quic.connection_receive_window`
+* `quic.idle_timeout`
+* Dial Fields
+
+Unsupported fields:
+
+* `tls.engine`
+* `tls.disable_sni`
+* `tls.insecure`
+* `tls.alpn`
+* `tls.min_version` / `tls.max_version`
+* `tls.cipher_suites`
+* `tls.curve_preferences`
+* `tls.client_certificate` / `tls.client_certificate_path` / `tls.client_key` / `tls.client_key_path`
+* `tls.fragment` / `tls.record_fragment`
+* `tls.kernel_tx` / `tls.kernel_rx`
+* `tls.handshake_timeout`
+* `tls.utls`
+* `tls.reality`
+* `http2.idle_timeout`
+* `http2.keep_alive_period`
+* `http2.max_concurrent_streams`
+* `quic.keep_alive_period`
+* `quic.initial_packet_size`
+* `quic.disable_path_mtu_discovery`
+* `quic.max_concurrent_streams`
 
 #### version
 

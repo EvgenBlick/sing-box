@@ -168,8 +168,6 @@ github.com/sagernet/bbolt v0.0.0-20231014093535-ea5cb2fe9f0a h1:+NkI2670SQpQWvkk
 github.com/sagernet/bbolt v0.0.0-20231014093535-ea5cb2fe9f0a/go.mod h1:63s7jpZqcDAIpj8oI/1v4Izok+npJOHACFCU6+huCkM=
 github.com/sagernet/cors v1.2.1 h1:Cv5Z8y9YSD6Gm+qSpNrL3LO4lD3eQVvbFYJSG7JCMHQ=
 github.com/sagernet/cors v1.2.1/go.mod h1:O64VyOjjhrkLmQIjF4KGRrJO/5dVXFdpEmCW/eISRAI=
-github.com/sagernet/cronet-go v0.0.0-20260410123506-30af64155529 h1:tG9OIgS2yHlPAV3JdeUxsRB5v/G+SLKJpxqzpp6k8Oo=
-github.com/sagernet/cronet-go v0.0.0-20260410123506-30af64155529/go.mod h1:hwFHBEjjthyEquDULbr4c4ucMedp8Drb6Jvm2kt/0Bw=
 github.com/sagernet/cronet-go/all v0.0.0-20260410123506-30af64155529 h1:lVtf0GEzHsM7kB8pOgLMXDtiHRdLd9YHJxiFJYA+UtY=
 github.com/sagernet/cronet-go/all v0.0.0-20260410123506-30af64155529/go.mod h1:9ojC4hR6aYIFjEJYlWDdVsirXLugrOW+ww6n4qoU4rk=
 github.com/sagernet/cronet-go/lib/android_386 v0.0.0-20260410122836-cce5e03076fc h1:kIrWkB7LXP+ff8d93ZgRJxY3CMMDCQ3UpJXXCtCN7g4=

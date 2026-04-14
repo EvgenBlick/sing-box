@@ -37,6 +37,7 @@ icon: material/new-box
 
 * `go`（默认）
 * `apple`
+* `cronet`
 
 `apple` 使用 NSURLSession，仅在 Apple 平台可用。
 
@@ -72,6 +73,45 @@ icon: material/new-box
 * `tls.ech`
 * `tls.utls`
 * `tls.reality`
+
+`cronet` 使用 Cronet，仅在 sing-box 使用 `with_naive_outbound` 标签构建时可用。
+
+支持的字段：
+
+* `version`
+* `disable_version_fallback`（仅 `version = 3`）
+* `headers`
+* `tls.server_name`（必须与请求主机匹配）
+* `tls.certificate` / `tls.certificate_path`
+* `tls.certificate_public_key_sha256`
+* `tls.ech.config` / `tls.ech.config_path` / `tls.ech.query_server_name`
+* `http2.stream_receive_window` / `http2.connection_receive_window`
+* `quic.stream_receive_window` / `quic.connection_receive_window`
+* `quic.idle_timeout`
+* 拨号字段
+
+不支持的字段：
+
+* `tls.engine`
+* `tls.disable_sni`
+* `tls.insecure`
+* `tls.alpn`
+* `tls.min_version` / `tls.max_version`
+* `tls.cipher_suites`
+* `tls.curve_preferences`
+* `tls.client_certificate` / `tls.client_certificate_path` / `tls.client_key` / `tls.client_key_path`
+* `tls.fragment` / `tls.record_fragment`
+* `tls.kernel_tx` / `tls.kernel_rx`
+* `tls.handshake_timeout`
+* `tls.utls`
+* `tls.reality`
+* `http2.idle_timeout`
+* `http2.keep_alive_period`
+* `http2.max_concurrent_streams`
+* `quic.keep_alive_period`
+* `quic.initial_packet_size`
+* `quic.disable_path_mtu_discovery`
+* `quic.max_concurrent_streams`
 
 #### version
 

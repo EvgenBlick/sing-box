@@ -14,6 +14,7 @@ import (
 	"github.com/sagernet/sing-box/option"
 	E "github.com/sagernet/sing/common/exceptions"
 	"github.com/sagernet/sing/common/logger"
+	"github.com/sagernet/sing/common/ntp"
 	"github.com/sagernet/sing/service"
 )
 
@@ -32,6 +33,7 @@ type appleClientConfig struct {
 	anchorPEM                  string
 	anchorOnly                 bool
 	certificatePublicKeySHA256 [][]byte
+	timeFunc                   func() time.Time
 }
 
 func (c *appleClientConfig) ServerName() string {
@@ -77,6 +79,7 @@ func (c *appleClientConfig) Clone() Config {
 		anchorPEM:                  c.anchorPEM,
 		anchorOnly:                 c.anchorOnly,
 		certificatePublicKeySHA256: append([][]byte(nil), c.certificatePublicKeySHA256...),
+		timeFunc:                   c.timeFunc,
 	}
 }
 
@@ -113,6 +116,7 @@ func newAppleClient(ctx context.Context, logger logger.ContextLogger, serverAddr
 		anchorPEM:                  validated.AnchorPEM,
 		anchorOnly:                 validated.AnchorOnly,
 		certificatePublicKeySHA256: append([][]byte(nil), options.CertificatePublicKeySHA256...),
+		timeFunc:                   ntp.TimeFuncFromContext(ctx),
 	}, nil
 }
 
