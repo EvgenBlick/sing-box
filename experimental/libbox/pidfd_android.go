@@ -1,3 +1,5 @@
+//go:build android && !go1.26
+
 package libbox
 
 import (
